@@ -1,0 +1,16 @@
+{
+  "name": "@intoreai/design-system",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "main": "./tokens.ts",
+  "types": "./tokens.ts",
+  "exports": {
+    ".": "./tokens.ts",
+    "./tokens.css": "./tokens.css",
+    "./primitives": "./primitives.tsx"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

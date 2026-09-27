@@ -1,0 +1,8 @@
+# IntoreAI public site
+node_modules/
+.next/
+out/
+dist/
+*.log
+.env
+.env.local

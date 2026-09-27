@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/*
+ * @intoreai/design-system — tokens.css
+ * Single source of truth for IntoreAI visual language.
+ * Imported by the marketing site AND the product app.
+ * Never hardcode these values anywhere else.
+ */
+
+@theme {
+  /* ——— Neutrals: warm paper + green-black ink (never #fff / #000) ——— */
+  --color-paper: #f6f3ec;
+  --color-parchment: #ede8db;
+  --color-ink: #131b17;
+  --color-ink-soft: #2b3530;
+  --color-mist: #6b7670;
+  --color-line: #dcd5c4;
+  --color-night: #0e1512;
+  --color-night-soft: #1a2420;
+
+  /* ——— Accents: emerald = CTA/active ONLY · clay = editorial emphasis ——— */
+  --color-signal: #12805c;
+  --color-signal-deep: #0b5c42;
+  --color-signal-tint: #dcefe4;
+  --color-clay: #c2542b;
+  --color-clay-tint: #f6e3d6;
+  --color-gold: #d9a441;
+
+  /* ——— Semantic ——— */
+  --color-surface: var(--color-paper);
+  --color-surface-elevated: #fffdf8;
+  --color-text-primary: var(--color-ink);
+  --color-text-secondary: var(--color-mist);
+  --color-accent: var(--color-signal);
+  --color-success: #12805c;
+  --color-warning: #b97f1f;
+  --color-danger: #b3352b;
+
+  /* ——— Type ——— */
+  --font-display: var(--fd-fraunces), "Fraunces", Georgia, serif;
+  --font-sans: var(--fd-public), "Public Sans", system-ui, sans-serif;
+
+  /* ——— Motion ——— */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-swift: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* ——— Radius ——— */
+  --radius-card: 20px;
+  --radius-pill: 999px;
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  --dur-micro: 180ms;
+  --dur-reveal: 750ms;
+  --dur-hero: 1600ms;
+}

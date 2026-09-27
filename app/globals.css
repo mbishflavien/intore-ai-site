@@ -1,0 +1,82 @@
+@import "@intoreai/design-system/tokens.css";
+
+@theme inline {
+  --font-display: var(--fd-fraunces), "Fraunces", Georgia, serif;
+  --font-sans: var(--fd-public), "Public Sans", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-paper);
+}
+
+/* Visible focus that survives custom-cursor layers */
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ——— Marquee engine (driven by primitives/Marquee) ——— */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation-name: marquee-x;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@media (hover: hover) {
+  .marquee-hover:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* ——— Reduced motion: kill cinematic motion, keep readable transitions ——— */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Display headline optical tuning */
+.font-display {
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+
+/* Outlined footer wordmark */
+.text-outline {
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
+  color: transparent;
+}
