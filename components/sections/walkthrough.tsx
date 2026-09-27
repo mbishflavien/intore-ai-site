@@ -5,74 +5,93 @@
  * starts here, not later. No video files: choreographed CSS mockups, IO-gated. */
 
 import { useEffect, useRef, useState } from "react";
-import { Kicker, Badge, CountUp } from "@intoreai/design-system/primitives";
-import { gsap } from "@/lib/motion/smooth";
+import { Kicker, Badge } from "@intoreai/design-system/primitives";
+import { gsap, ScrollTrigger } from "@/lib/motion/smooth";
 
 const MODULES = [
   {
     n: "01",
     name: "Screening Engine",
+    video: "screening",
     desc: "Five-dimension scoring with written reasoning per candidate. Fraud-risk heuristics flagged, never hidden.",
-    bars: [["Aline M.", 92], ["Jean C.", 78], ["Divine U.", 64]],
-    foot: "reasoning: strong verified proof · relevance 88",
+    foot: "real capture · ranked shortlist, live scores",
   },
   {
     n: "02",
     name: "Interview Platform",
+    video: "interview",
     desc: "Shared question banks, timed cognitive tasks, structured panels — one comparable record per candidate.",
-    bars: [["Technical", 86], ["Cognitive", 74], ["Panel fit", 81]],
-    foot: "2 interviewers · blind-reviewed",
+    foot: "real capture · interview scheduling, live app",
   },
   {
     n: "03",
     name: "Integrity Monitoring",
+    video: "integrity",
     desc: "Behavior-pattern flags routed to a human reviewer. Never auto-disqualifying, never inferred emotion.",
-    bars: [["Focus signal", 95], ["Originality", 88], ["Consistency", 91]],
-    foot: "flag: none · reviewed by J. Recruiter",
+    foot: "real capture · evidence review pane",
   },
   {
     n: "04",
     name: "AI Recommendation",
+    video: "recommendation",
     desc: "Ranked shortlist with strengths, gaps, and a written recommendation — the decision stays with HR.",
-    bars: [["Hire signal", 89], ["Risk", 22], ["Culture add", 76]],
-    foot: "recommendation: advance to offer",
+    foot: "real capture · written recommendation + decision",
   },
   {
     n: "05",
     name: "Prep Hub",
+    video: "prep",
     desc: "Candidates practice against role-shaped question banks and arrive ready. Better inputs, better hires.",
-    bars: [["Role readiness", 83], ["Drills done", 17], ["Streak", 6]],
-    foot: "13 tracks · instant feedback",
+    foot: "real capture · skill-gap recommendations, live app",
   },
 ];
 
-function Mockup({ bars, foot, active }: { bars: [string, number][]; foot: string; active: boolean }) {
+function ModuleVideo({ name, active, label }: { name: string; active: boolean; label: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (reduced) {
+      v.pause();
+      return;
+    }
+    if (active) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [active, reduced]);
+
+  useEffect(() => {
+    // Keep ScrollTrigger positions honest once media dimensions land.
+    const v = ref.current;
+    if (!v) return;
+    const refresh = () => ScrollTrigger.refresh();
+    v.addEventListener("loadedmetadata", refresh);
+    return () => v.removeEventListener("loadedmetadata", refresh);
+  }, []);
+
   return (
-    <div className="rounded-card border border-paper/12 bg-night-soft p-6 md:p-8" data-cursor="View">
-      <div className="flex items-center gap-2" aria-hidden="true">
-        <span className="h-2.5 w-2.5 rounded-full bg-paper/20" />
-        <span className="h-2.5 w-2.5 rounded-full bg-paper/20" />
-        <span className="h-2.5 w-2.5 rounded-full bg-signal" />
-      </div>
-      <div className="mt-6 space-y-5">
-        {bars.map(([label, v], i) => (
-          <div key={label}>
-            <div className="mb-1.5 flex justify-between font-sans text-sm">
-              <span className="font-semibold text-paper/85">{label}</span>
-              <span className="font-bold tabular-nums text-signal">
-                {active ? <CountUp to={v} durationMs={1000 + i * 150} /> : 0}
-              </span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-paper/10">
-              <div
-                className="h-full rounded-full bg-signal transition-[width] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-                style={{ width: active ? `${Math.min(100, v)}%` : "0%" }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="mt-6 border-t border-paper/10 pt-4 font-mono text-xs text-paper/50">{foot}</p>
+    <div className="overflow-hidden rounded-card border border-paper/12 bg-night-soft" data-cursor="Play">
+      <video
+        ref={ref}
+        className="aspect-[8/5] w-full object-cover object-top"
+        muted
+        playsInline
+        loop
+        autoPlay={active && !reduced}
+        preload="metadata"
+        poster={`/videos/modules/${name}.jpg`}
+        aria-label={`${label} — screen recording of the real IntoreAI product`}
+      >
+        <source src={`/videos/modules/${name}.webm`} type="video/webm" />
+        <source src={`/videos/modules/${name}.mp4`} type="video/mp4" />
+      </video>
+      <p className="border-t border-paper/10 px-5 py-3 font-mono text-xs text-paper/50">{label}</p>
     </div>
   );
 }
@@ -88,6 +107,7 @@ export function Walkthrough() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
       items.forEach((item, i) => {
+        // Entrance reverses on scroll-up (no once:true anywhere on this page).
         gsap.fromTo(
           item,
           { y: 40, opacity: 0 },
@@ -98,12 +118,20 @@ export function Walkthrough() {
             ease: "expo.out",
             scrollTrigger: {
               trigger: item,
-              start: "top 75%",
-              once: true,
-              onEnter: () => setActive(i),
+              start: "top 78%",
+              toggleActions: "play reverse play reverse",
             },
           },
         );
+        // Rail highlight tracks BOTH scroll directions via isActive toggle.
+        ScrollTrigger.create({
+          trigger: item,
+          start: "top center",
+          end: "bottom center",
+          onToggle: (self) => {
+            if (self.isActive) setActive(i);
+          },
+        });
       });
     }, el);
     return () => ctx.revert();
@@ -150,7 +178,7 @@ export function Walkthrough() {
                     </Badge>
                   </p>
                 </div>
-                <Mockup bars={m.bars as [string, number][]} foot={m.foot} active={active === i} />
+                <ModuleVideo name={m.video} active={active === i} label={m.foot} />
               </article>
             ))}
           </div>

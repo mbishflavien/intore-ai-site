@@ -202,7 +202,16 @@ export function CountUp({
     }
     const io = new IntersectionObserver(
       (entries) => {
-        if (!entries[0].isIntersecting || done.current) return;
+        const entry = entries[0];
+        // Scrolled back above the trigger: reset so re-entry re-animates cleanly.
+        if (!entry.isIntersecting) {
+          if (entry.boundingClientRect.top > 0) {
+            done.current = false;
+            setVal(0);
+          }
+          return;
+        }
+        if (done.current) return;
         done.current = true;
         const t0 = performance.now();
         const tick = (t: number) => {
@@ -212,7 +221,6 @@ export function CountUp({
           if (p < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-        io.disconnect();
       },
       { threshold: 0.4 },
     );

@@ -34,7 +34,12 @@ export function Reveal({
           duration: 0.75,
           delay,
           ease: "expo.out",
-          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+          scrollTrigger: {
+            trigger: el,
+            start: "top 88%",
+            // Full four-state behavior: reverses cleanly when scrolling back up.
+            toggleActions: "play reverse play reverse",
+          },
         },
       );
     });

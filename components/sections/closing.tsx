@@ -40,7 +40,11 @@ export function FinalCta() {
           duration: 1,
           ease: "expo.out",
           stagger: 0.04,
-          scrollTrigger: { trigger: el, start: "top 75%", once: true },
+          scrollTrigger: {
+            trigger: el,
+            start: "top 75%",
+            toggleActions: "play reverse play reverse",
+          },
         },
       );
     }, el);

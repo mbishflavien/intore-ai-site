@@ -1,5 +1,27 @@
 # Performance & Verification Notes
 
+## Enhancement pass (media + scroll-reversal) — measured
+
+New media (all genuine screen captures of `intore-ai-frontend` with seeded
+data — Playwright/Chromium, API-authenticated, no fabricated UI):
+
+| File | Size | Content |
+|---|---|---|
+| `public/videos/modules/screening.webm` / `.mp4` / `.jpg` | 124 / 153 / 41 KB | Ranked shortlist scroll + candidate detail, live scores |
+| `public/videos/modules/interview.webm` / `.mp4` / `.jpg` | 73 / 113 / 40 KB | Interview scheduling flow, live app |
+| `public/videos/modules/integrity.webm` / `.mp4` / `.jpg` | 67 / 102 / 34 KB | Evidence/score-breakdown review pane |
+| `public/videos/modules/recommendation.webm` / `.mp4` / `.jpg` | 75 / 120 / 41 KB | Written recommendation + decision buttons |
+| `public/videos/modules/prep.webm` / `.mp4` / `.jpg` | 210 / 256 / 50 KB | Applicant Upskill hub, skill-gap recommendations |
+
+Capture: 960px viewport, 12fps, VP9 crf34 / H264 crf26. Posters are stills
+from the same clips. Videos play only while their module is rail-active
+(verified: ≤1 playing), all paused under `prefers-reduced-motion`.
+
+Acceptance suite (`accept.mjs`, Playwright): 10/10 — 5 videos wired with
+poster+webm+mp4+muted+loop; hero canvas frame-differs; metrics count then
+reset on scroll-back; rail re-highlights 01 in reverse; zero page errors on a
+full down+up pass; reduced-motion pauses everything with readable hero.
+
 ## Production build (measured)
 
 `npm run build` — Next.js 15.5.26, all 7 routes static:

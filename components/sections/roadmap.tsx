@@ -31,7 +31,11 @@ export function Roadmap() {
             opacity: 1,
             duration: 0.7,
             ease: "expo.out",
-            scrollTrigger: { trigger: card, start: "top 85%", once: true },
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play reverse play reverse",
+            },
           },
         );
       });
