@@ -6,7 +6,6 @@ import { Cursor } from "@/lib/motion/cursor";
 import { Loader } from "@/components/loader";
 import { Nav } from "@/components/nav";
 import { Hero } from "@/components/sections/hero";
-import { Reel } from "@/components/sections/reel";
 import { Shortlist } from "@/components/sections/shortlist";
 import { Problem } from "@/components/sections/problem";
 import { Pillars } from "@/components/sections/pillars";
@@ -30,7 +29,6 @@ export default function Home() {
       <Nav />
       <main>
         <Hero started={started} />
-        <Reel />
         <Shortlist />
         <Problem />
         <Pillars />
