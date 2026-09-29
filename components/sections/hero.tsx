@@ -1,6 +1,7 @@
 "use client";
 
-/* Hero: kinetic split-text headline + generative "signal in noise" canvas. */
+/* Hero: kinetic split-text headline + generative "signal in noise" canvas.
+ * The cinematic reel that follows lives in reel.tsx. */
 
 import { useEffect, useRef } from "react";
 import { Button, Magnetic, Badge } from "@intoreai/design-system/primitives";
@@ -8,7 +9,7 @@ import { gsap } from "@/lib/motion/smooth";
 import { splitWords } from "@/lib/motion/reveal";
 import { IconArrow } from "@/components/icons";
 
-function SignalCanvas() {
+export function SignalCanvas({ onDark = false }: { onDark?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ function SignalCanvas() {
       t += 1;
       ctx.clearRect(0, 0, w, h);
       // faint field
-      ctx.fillStyle = "rgba(19,27,23,0.10)";
+      ctx.fillStyle = onDark ? "rgba(246,243,236,0.22)" : "rgba(19,27,23,0.10)";
       for (const d of dots) {
         d.y -= d.v;
         if (d.y < 0) d.y = 1;
@@ -49,7 +50,7 @@ function SignalCanvas() {
       }
       // lit signals rising + connecting threads
       const lit = dots.filter((d) => d.lit);
-      ctx.strokeStyle = "rgba(18,128,92,0.35)";
+      ctx.strokeStyle = onDark ? "rgba(40,190,140,0.5)" : "rgba(18,128,92,0.35)";
       ctx.lineWidth = 1;
       for (let i = 0; i < lit.length; i++) {
         for (let j = i + 1; j < lit.length; j++) {
@@ -63,7 +64,7 @@ function SignalCanvas() {
           }
         }
       }
-      ctx.fillStyle = "#12805c";
+      ctx.fillStyle = onDark ? "#2fbf8c" : "#12805c";
       for (const d of lit) {
         const pulse = 2 + Math.sin(t / 22 + d.x * 9) * 0.9;
         ctx.beginPath();
@@ -82,7 +83,7 @@ function SignalCanvas() {
       io.disconnect();
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [onDark]);
 
   return <canvas ref={ref} className="absolute inset-0 h-full w-full" aria-hidden="true" />;
 }
@@ -106,6 +107,13 @@ export function Hero({ started }: { started: boolean }) {
         { y: 24, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.9, ease: "expo.out", stagger: 0.12, delay: 0.7 },
       );
+      // Headline drifts up and recedes as the reel takes over.
+      gsap.to(".hero-title", {
+        yPercent: -18,
+        opacity: 0.25,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true },
+      });
     }, el);
     return () => ctx.revert();
   }, [started]);
@@ -124,7 +132,7 @@ export function Hero({ started }: { started: boolean }) {
             Pilot-stage · Kigali & remote teams
           </Badge>
         </p>
-        <h1 className="font-display font-black leading-[0.95] tracking-tight text-ink text-[clamp(3rem,9vw,8.5rem)]">
+        <h1 className="hero-title font-display font-black leading-[0.95] tracking-tight text-ink text-[clamp(3rem,9vw,8.5rem)]">
           {splitWords("AI ranks the shortlist.")}
           <br />
           <span className="text-signal">{splitWords("Humans make the hire.")}</span>

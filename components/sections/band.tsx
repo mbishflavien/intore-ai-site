@@ -1,8 +1,10 @@
 "use client";
 
-/* Trust marquee band: real differentiators, two counter-rotating rows. */
+/* Trust marquee band: real differentiators, two counter-rotating rows,
+ * trimmed top and bottom with imigongo relief like a woven border. */
 
 import { Marquee } from "@intoreai/design-system/primitives";
+import { Imigongo } from "@/components/media/imigongo";
 
 const ROW_A = ["Human-in-the-loop", "Explainable AI", "Bias guardrails", "Consented monitoring"];
 const ROW_B = ["GDPR-aligned", "Rwanda DPL", "EU AI Act ready", "Humans always decide"];
@@ -22,15 +24,19 @@ function Row({ items, dot }: { items: string[]; dot: string }) {
 
 export function TrustBand() {
   return (
-    <section aria-label="Trust signals" className="overflow-hidden border-y border-line bg-clay py-2 text-paper">
-      <Marquee speed={30}>
-        <Row items={ROW_A} dot="bg-paper" />
-      </Marquee>
-      <div className="border-t border-paper/25">
-        <Marquee speed={38} reverse>
-          <Row items={ROW_B} dot="bg-night" />
+    <section aria-label="Trust signals" className="overflow-hidden border-y border-line bg-clay text-paper">
+      <Imigongo variant="zigzag" tone="night" scale={0.55} className="relative h-5" />
+      <div className="py-2">
+        <Marquee speed={30}>
+          <Row items={ROW_A} dot="bg-paper" />
         </Marquee>
+        <div className="border-t border-paper/25">
+          <Marquee speed={38} reverse>
+            <Row items={ROW_B} dot="bg-night" />
+          </Marquee>
+        </div>
       </div>
+      <Imigongo variant="zigzag" tone="night" scale={0.55} sweep={false} className="relative h-5 -scale-y-100" />
     </section>
   );
 }

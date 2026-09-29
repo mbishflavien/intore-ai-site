@@ -1,8 +1,7 @@
 "use client";
 
-/* Product walkthrough: sticky 01–05 rail + animated token-built mockups.
- * Mockups use ONLY shared tokens/primitives — the Section 3A consistency proof
- * starts here, not later. No video files: choreographed CSS mockups, IO-gated. */
+/* Product walkthrough: sticky 01–05 rail + real product screen recordings.
+ * Each module's capture plays only while its row is active (public/videos/modules). */
 
 import { useEffect, useRef, useState } from "react";
 import { Kicker, Badge } from "@intoreai/design-system/primitives";

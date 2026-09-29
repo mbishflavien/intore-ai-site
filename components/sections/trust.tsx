@@ -6,6 +6,8 @@ import { Kicker, Badge } from "@intoreai/design-system/primitives";
 import { Reveal } from "@/lib/motion/reveal";
 import { Button } from "@intoreai/design-system/primitives";
 import { IconArrow, IconShield, IconEye, IconCheck, IconCompass } from "@/components/icons";
+import { Imigongo } from "@/components/media/imigongo";
+import { Parallax } from "@/lib/motion/parallax";
 
 const CARDS = [
   {
@@ -36,15 +38,18 @@ const CARDS = [
 
 export function Trust() {
   return (
-    <section id="trust" className="bg-parchment py-24 md:py-32">
-      <div className="mx-auto max-w-[1400px] px-[clamp(20px,5vw,72px)]">
+    <section id="trust" className="relative overflow-hidden bg-parchment py-24 md:py-32">
+      <Parallax amount={24} className="pointer-events-none absolute -inset-y-[15%] right-0 w-[min(46vw,640px)] [mask-image:linear-gradient(to_left,black_30%,transparent)]">
+        <Imigongo variant="lattice" tone="paper" scale={1.4} className="absolute inset-0" />
+      </Parallax>
+      <div className="relative mx-auto max-w-[1400px] px-[clamp(20px,5vw,72px)]">
         <Kicker index="05">Trust & compliance — the moat</Kicker>
         <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <h2 className="max-w-3xl font-display text-[clamp(2rem,4.5vw,3.75rem)] font-black leading-[1.02]">
             You can defend this platform <span className="text-clay">to an auditor.</span>
           </h2>
           <Reveal delay={0.1}>
-            <Button href="/pilot" variant="secondary">
+            <Button href="/legal" variant="secondary">
               Read our commitments <IconArrow className="h-4 w-4" />
             </Button>
           </Reveal>

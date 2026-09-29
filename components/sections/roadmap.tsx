@@ -46,7 +46,7 @@ export function Roadmap() {
   return (
     <section id="roadmap" ref={root} className="bg-night py-24 text-paper md:py-32">
       <div className="mx-auto max-w-[1400px] px-[clamp(20px,5vw,72px)]">
-        <Kicker index="07" onDark>
+        <Kicker index="08" onDark>
           Roadmap & traction
         </Kicker>
         <h2 className="mt-6 max-w-3xl font-display text-[clamp(2rem,4.5vw,3.75rem)] font-black leading-[1.02]">
