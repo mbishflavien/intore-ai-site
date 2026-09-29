@@ -102,16 +102,9 @@ body {
   animation: imigongo-sweep 9s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
-/* ——— Film grain: unifies photography and flat UI ——— */
-/* Jitters the noise tile, not the element: an oversized fixed layer would
-   widen the page on mobile. */
-@keyframes grain-shift {
-  0%, 100% { background-position: 0 0; }
-  20% { background-position: -37px 23px; }
-  40% { background-position: 29px -41px; }
-  60% { background-position: -19px -13px; }
-  80% { background-position: 43px 31px; }
-}
+/* ——— Film grain: unifies photography and flat UI ———
+   Static on purpose: an animated full-screen blend layer repaints the whole
+   page every step and makes scrolling heavy. */
 .grain {
   position: fixed;
   inset: 0;
@@ -120,12 +113,10 @@ body {
   opacity: 0.07;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain-shift 0.9s steps(4) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .imigongo-sweep,
-  .grain {
+  .imigongo-sweep {
     animation: none;
   }
 }

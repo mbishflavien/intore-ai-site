@@ -135,12 +135,35 @@ export function Nav() {
     toggleRef.current?.focus();
   }, []);
 
+  const progressRef = useRef<HTMLSpanElement>(null);
+  const [active, setActive] = useState<string | null>(null);
+
   useEffect(() => {
-    // Goes solid as soon as content starts sliding under the bar.
-    const onScroll = () => setSolid(window.scrollY > 48);
+    let raf = 0;
+    const onScroll = () => {
+      // Goes solid as soon as content starts sliding under the bar.
+      setSolid(window.scrollY > 48);
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progressRef.current?.style.setProperty("transform", `scaleX(${max > 0 ? window.scrollY / max : 0})`);
+        // Highlight the section whose area holds the middle of the screen.
+        const mid = window.innerHeight / 2;
+        let current: string | null = null;
+        for (const l of LINKS) {
+          const r = document.querySelector(l.href)?.getBoundingClientRect();
+          if (r && r.top <= mid && r.bottom >= mid) current = l.href;
+        }
+        setActive(current);
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   return (
@@ -160,20 +183,39 @@ export function Nav() {
             <Wordmark className="text-2xl" />
           </a>
           <ul className="hidden items-center gap-8 md:flex">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  className="group relative font-sans text-sm font-semibold text-ink/80 hover:text-ink"
-                >
-                  {l.label}
-                  <span
-                    aria-hidden="true"
-                    className="absolute -bottom-1 left-0 h-[2px] w-full origin-left scale-x-0 bg-signal transition-transform duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100"
-                  />
-                </a>
-              </li>
-            ))}
+            {LINKS.map((l) => {
+              const on = active === l.href;
+              return (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    aria-current={on ? "location" : undefined}
+                    className={`group relative block font-sans text-sm font-semibold transition-colors duration-200 ${
+                      on ? "text-ink" : "text-ink/70 hover:text-ink"
+                    }`}
+                  >
+                    {/* Text roll: the label slides up and a copy rises in its place. */}
+                    <span className="relative block overflow-hidden">
+                      <span className="block transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full">
+                        {l.label}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-0 translate-y-full text-signal transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0"
+                      >
+                        {l.label}
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-signal transition-transform duration-200 ${
+                        on ? "scale-100" : "scale-0"
+                      }`}
+                    />
+                  </a>
+                </li>
+              );
+            })}
           </ul>
           <div className="flex items-center gap-3">
             {APP_URL && (
@@ -206,6 +248,12 @@ export function Nav() {
             </button>
           </div>
         </nav>
+        {/* Reading progress along the bottom edge of the bar. */}
+        <span
+          ref={progressRef}
+          aria-hidden="true"
+          className="absolute inset-x-0 -bottom-px h-[2px] origin-left scale-x-0 bg-signal"
+        />
       </header>
       <MobileMenu open={open} onClose={close} />
     </>
