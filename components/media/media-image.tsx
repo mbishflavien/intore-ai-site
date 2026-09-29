@@ -6,7 +6,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/motion/smooth";
-import { getImage, prefersReducedMotion, srcSet } from "@/lib/media";
+import { focusOf, getImage, prefersReducedMotion, srcSet } from "@/lib/media";
 import { Imigongo } from "./imigongo";
 
 type Fallback = React.ComponentProps<typeof Imigongo>;
@@ -37,6 +37,8 @@ export function MediaImage({
 }) {
   const root = useRef<HTMLDivElement>(null);
   const entry = getImage(id);
+  // Callers often place it absolutely; only default to relative when they don't.
+  const position = /\b(absolute|fixed|sticky)\b/.test(className) ? "" : "relative";
 
   useEffect(() => {
     const el = root.current;
@@ -72,7 +74,7 @@ export function MediaImage({
   }, [reveal, parallax]);
 
   return (
-    <div ref={root} className={`relative overflow-hidden ${className}`}>
+    <div ref={root} className={`${position} overflow-hidden ${className}`}>
       <div className="media-inner absolute inset-0 will-change-transform">
         {entry ? (
           <picture>
@@ -88,7 +90,12 @@ export function MediaImage({
               fetchPriority={priority ? "high" : "auto"}
               decoding="async"
               className={`h-full w-full object-cover ${imgClassName}`}
-              style={{ backgroundImage: `url(${entry.blur})`, backgroundSize: "cover" }}
+              style={{
+                objectPosition: focusOf(id),
+                backgroundImage: `url(${entry.blur})`,
+                backgroundSize: "cover",
+                backgroundPosition: focusOf(id),
+              }}
             />
           </picture>
         ) : (

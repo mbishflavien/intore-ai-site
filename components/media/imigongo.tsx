@@ -1,3 +1,5 @@
+"use client";
+
 /* Imigongo: Rwanda's geometric relief art, drawn in code.
  * Three tiled motifs, each rendered as shadow + highlight + face layers so the
  * ridges read as raised relief. A slow raking "light sweep" can pass over it.

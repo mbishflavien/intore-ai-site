@@ -8,6 +8,19 @@ export type VideoEntry = { landscape?: boolean; portrait?: boolean };
 const images = manifest.images as Record<string, ImageEntry>;
 const videos = manifest.videos as Record<string, VideoEntry>;
 
+/** Focal points for photos cropped into frames of a different aspect (object-position). */
+const FOCUS: Record<string, string> = {
+  "prep-candidate": "68% 50%",
+  "problem-hr": "60% 50%",
+  "problem-seeker": "57% 45%",
+  "hero-still": "45% 50%",
+  "closing-still": "55% 50%",
+};
+
+export function focusOf(id: string) {
+  return FOCUS[id] ?? "50% 50%";
+}
+
 export function getImage(id: string): ImageEntry | undefined {
   return images[id];
 }

@@ -62,7 +62,7 @@ export function Reel() {
             fallback={{ variant: "zigzag", tone: "night", scale: 1.6 }}
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-night/85 via-night/25 to-night/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-night/90 via-night/30 to-night/5" />
         <div className="reel-signal pointer-events-none absolute inset-0 opacity-0 mix-blend-screen">
           <SignalCanvas onDark />
         </div>

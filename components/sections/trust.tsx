@@ -8,6 +8,7 @@ import { Button } from "@intoreai/design-system/primitives";
 import { IconArrow, IconShield, IconEye, IconCheck, IconCompass } from "@/components/icons";
 import { Imigongo } from "@/components/media/imigongo";
 import { Parallax } from "@/lib/motion/parallax";
+import { ImigongoSculpture } from "@/components/media/sculpture";
 
 const CARDS = [
   {
@@ -39,20 +40,27 @@ const CARDS = [
 export function Trust() {
   return (
     <section id="trust" className="relative overflow-hidden bg-parchment py-24 md:py-32">
-      <Parallax amount={24} className="pointer-events-none absolute -inset-y-[15%] right-0 w-[min(46vw,640px)] [mask-image:linear-gradient(to_left,black_30%,transparent)]">
+      <Parallax amount={24} className="pointer-events-none absolute -inset-y-[15%] right-0 w-[min(46vw,640px)] opacity-35 [mask-image:linear-gradient(to_left,black_30%,transparent)]">
         <Imigongo variant="lattice" tone="paper" scale={1.4} className="absolute inset-0" />
       </Parallax>
       <div className="relative mx-auto max-w-[1400px] px-[clamp(20px,5vw,72px)]">
         <Kicker index="05">Trust & compliance — the moat</Kicker>
-        <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <h2 className="max-w-3xl font-display text-[clamp(2rem,4.5vw,3.75rem)] font-black leading-[1.02]">
-            You can defend this platform <span className="text-clay">to an auditor.</span>
-          </h2>
-          <Reveal delay={0.1}>
-            <Button href="/legal" variant="secondary">
-              Read our commitments <IconArrow className="h-4 w-4" />
-            </Button>
-          </Reveal>
+        <div className="mt-6 grid items-center gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
+          <div>
+            <h2 className="max-w-3xl font-display text-[clamp(2rem,4.5vw,3.75rem)] font-black leading-[1.02]">
+              You can defend this platform <span className="text-clay">to an auditor.</span>
+            </h2>
+            <p className="mt-5 max-w-lg font-sans text-lg leading-relaxed text-ink-soft">
+              Built the way imigongo is: patterned, deliberate, and made to last. Every safeguard is
+              designed in, not bolted on.
+            </p>
+            <Reveal delay={0.1} className="mt-8">
+              <Button href="/legal" variant="secondary">
+                Read our commitments <IconArrow className="h-4 w-4" />
+              </Button>
+            </Reveal>
+          </div>
+          <ImigongoSculpture className="mx-auto aspect-square w-full max-w-[300px] md:max-w-[460px]" />
         </div>
 
         <div className="mt-12 grid gap-5 md:grid-cols-2">

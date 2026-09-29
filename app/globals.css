@@ -103,16 +103,18 @@ body {
 }
 
 /* ——— Film grain: unifies photography and flat UI ——— */
+/* Jitters the noise tile, not the element: an oversized fixed layer would
+   widen the page on mobile. */
 @keyframes grain-shift {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-3%, 2%); }
-  40% { transform: translate(2%, -3%); }
-  60% { transform: translate(-2%, -1%); }
-  80% { transform: translate(3%, 3%); }
+  0%, 100% { background-position: 0 0; }
+  20% { background-position: -37px 23px; }
+  40% { background-position: 29px -41px; }
+  60% { background-position: -19px -13px; }
+  80% { background-position: 43px 31px; }
 }
 .grain {
   position: fixed;
-  inset: -10%;
+  inset: 0;
   z-index: 250;
   pointer-events: none;
   opacity: 0.07;
@@ -125,5 +127,32 @@ body {
   .imigongo-sweep,
   .grain {
     animation: none;
+  }
+}
+
+/* ——— Shortlist story steps: stacked in one spot, crossfaded by scroll ——— */
+.sl-steps {
+  display: grid;
+}
+.sl-step {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sl-step.is-active {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-steps {
+    display: block;
+  }
+  .sl-step {
+    opacity: 1;
+    transform: none;
+    margin-bottom: 1.5rem;
   }
 }

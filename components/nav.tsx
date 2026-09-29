@@ -136,7 +136,8 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > window.innerHeight * 0.72);
+    // Goes solid as soon as content starts sliding under the bar.
+    const onScroll = () => setSolid(window.scrollY > 48);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -183,9 +184,12 @@ export function Nav() {
                 Sign in
               </a>
             )}
-            <Button href="/pilot" size="sm">
-              Book a pilot
-            </Button>
+            {/* On phones the CTA lives in the menu, so the bar never overflows. */}
+            <span className="hidden sm:block">
+              <Button href="/pilot" size="sm">
+                Book a pilot
+              </Button>
+            </span>
             <button
               ref={toggleRef}
               type="button"

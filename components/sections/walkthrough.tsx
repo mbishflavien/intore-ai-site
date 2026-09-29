@@ -47,9 +47,9 @@ const MODULES = [
 
 function ModuleVideo({ name, active, label }: { name: string; active: boolean; label: string }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const reduced =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Read after mount: reading it during render made SSR and client disagree.
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches), []);
 
   useEffect(() => {
     const v = ref.current;
@@ -82,7 +82,6 @@ function ModuleVideo({ name, active, label }: { name: string; active: boolean; l
         muted
         playsInline
         loop
-        autoPlay={active && !reduced}
         preload="metadata"
         poster={`/videos/modules/${name}.jpg`}
         aria-label={`${label} — screen recording of the real IntoreAI product`}

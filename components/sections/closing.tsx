@@ -59,10 +59,10 @@ export function FinalCta() {
         id="closing-loop"
         posterId="closing-still"
         alt="A hiring manager closes a laptop after a decision, Kigali at night (illustrative)"
-        className="absolute inset-0 h-full w-full opacity-60"
+        className="absolute inset-0 h-full w-full opacity-90"
         fallback={{ variant: "diamond", tone: "night", scale: 1.8 }}
       />
-      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(14,21,18,0.55)_0%,rgba(14,21,18,0.92)_75%)]" />
+      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(14,21,18,0.62)_0%,rgba(14,21,18,0.35)_55%,rgba(14,21,18,0.85)_100%)]" />
       <div className="relative mx-auto max-w-[1400px] text-center">
         <p className="font-display leading-[1.0] font-black tracking-tight text-[clamp(2.25rem,6vw,5.5rem)]">
           <CtaLine text="Hiring decisions that move" />
@@ -114,24 +114,16 @@ function OutlineWordmark() {
     const svg = ref.current;
     if (!svg || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        svg.querySelector("text"),
-        { strokeDashoffset: DASH },
-        {
-          strokeDashoffset: 0,
-          ease: "none",
-          scrollTrigger: { trigger: svg, start: "top bottom", end: "bottom 85%", scrub: true },
-        },
-      );
-      gsap.fromTo(
-        svg.querySelector("circle"),
-        { scale: 0, transformOrigin: "center" },
-        {
-          scale: 1,
-          ease: "back.out(3)",
-          scrollTrigger: { trigger: svg, start: "bottom 88%", toggleActions: "play reverse play reverse" },
-        },
-      );
+      // Drawn by scrolling to the very end of the page ("max" is always reachable).
+      gsap
+        .timeline({ scrollTrigger: { trigger: svg, start: "top bottom", end: "max", scrub: true } })
+        .fromTo(svg.querySelector("text"), { strokeDashoffset: DASH }, { strokeDashoffset: 0, ease: "none", duration: 1 })
+        .fromTo(
+          svg.querySelector("circle"),
+          { scale: 0, transformOrigin: "50% 50%" },
+          { scale: 1, ease: "back.out(3)", duration: 0.25 },
+          0.8,
+        );
     });
     return () => ctx.revert();
   }, []);

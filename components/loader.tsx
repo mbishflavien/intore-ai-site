@@ -1,6 +1,7 @@
 "use client";
 
-/* Branded loader: counting with the wordmark. Skipped on repeat visits.
+/* Branded loader: counting with the wordmark. Skipped on repeat visits and
+ * under reduced motion.
  * Exit: the wordmark's signal dot swells to fill the screen ("signal found"),
  * then the curtain lifts onto the hero. onDone fires as the curtain starts
  * lifting (hero begins its reveal underneath); onExit when it's gone. */
@@ -20,7 +21,7 @@ export function Loader({ onDone, onExit }: { onDone: () => void; onExit: () => v
   useEffect(() => {
     const onDone = () => cb.current.onDone();
     const onExit = () => cb.current.onExit();
-    if (sessionStorage.getItem("intore-seen")) {
+    if (sessionStorage.getItem("intore-seen") || prefersReducedMotion()) {
       onDone();
       onExit();
       return;

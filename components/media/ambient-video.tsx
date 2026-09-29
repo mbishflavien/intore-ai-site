@@ -1,12 +1,14 @@
 "use client";
 
 /* AmbientVideo: muted background loop that only plays while on screen.
- * Degrades in order: video → poster photo → code-drawn imigongo.
+ * Degrades in order: video → depth-parallax photo (if a depth map exists)
+ * → poster photo → code-drawn imigongo.
  * Reduced motion shows the poster only. Generalised from walkthrough's ModuleVideo. */
 
 import { useEffect, useRef, useState } from "react";
 import { getVideo, getImage, prefersReducedMotion } from "@/lib/media";
 import { MediaImage } from "./media-image";
+import { DepthImage } from "./depth-image";
 import { Imigongo } from "./imigongo";
 
 export function AmbientVideo({
@@ -45,6 +47,10 @@ export function AmbientVideo({
   const poster = video ? `/videos/ambient/${id}.jpg` : undefined;
 
   if (!video || reduced) {
+    // Until footage exists, a depth map makes the still move like film.
+    if (!video && posterId && getImage(posterId) && getImage(`${posterId}-depth`)) {
+      return <DepthImage id={posterId} alt={alt} className={className} priority={eager} />;
+    }
     if (posterId && getImage(posterId)) {
       return <MediaImage id={posterId} alt={alt} className={className} reveal={false} parallax={false} priority={eager} />;
     }
@@ -53,7 +59,7 @@ export function AmbientVideo({
       return <img src={poster} alt={alt} className={`object-cover ${className}`} />;
     }
     return (
-      <div className={`relative ${className}`} role="img" aria-label={alt}>
+      <div className={`${/(absolute|fixed)/.test(className) ? "" : "relative"} ${className}`} role="img" aria-label={alt}>
         <Imigongo {...fallback} className="absolute inset-0" />
       </div>
     );

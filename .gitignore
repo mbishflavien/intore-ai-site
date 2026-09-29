@@ -10,3 +10,4 @@ dist/
 # Raw media sources (large); optimised output lives in public/
 assets-src/images/
 assets-src/video/
+assets-src/.models/
