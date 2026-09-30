@@ -111,3 +111,41 @@ One continuous 8-second drone shot at dawn in Kigali, Rwanda, with no cuts. The 
 - [ ] Optional: `drone-push.mp4`
 
 When they're in `assets-src/`, tell me, and I'll key the green, build the depth layers and wire up the two acts.
+
+---
+
+## Video version (preferred): one clip per scene
+
+Each clip becomes a scroll-scrubbed frame sequence (`node scripts/video-frames.mjs <id> --start <s>`).
+Every frame gets frozen on screen while someone scrolls, so these rules matter:
+
+- **One continuous shot, no cuts, 8 seconds.**
+- **Slow, constant camera speed**, no speed ramps, a steady gimbal and no shake.
+- **Little motion blur**, and no flashes or sudden light changes.
+- **16:9**, the highest resolution available.
+- **Image-to-video** where marked 🖼: upload that photo as the starting frame so the people and room match the rest of the site.
+
+Save the clips as `assets-src/video/<id>.mp4`.
+
+**`drone-approach`**: hills → building → window (Act 1, follows `drone-hills`)
+```text
+One continuous 8-second drone shot at dawn over misty green terraced hills in Kigali, Rwanda, matching a golden sunrise with soft mist in the valleys. The camera glides slowly and steadily forward and slightly down toward a modern low-rise office building of warm timber and cream concrete on a hillside, and approaches one large floor-to-ceiling window on the second floor that glows with warm interior light. The shot ends very close to the glass, the window filling the frame, with a meeting room visible inside. Constant slow speed, perfectly steady gimbal, no cuts, no shake, no speed ramps. 35mm film look, Kodak Portra warmth, soft grain. No text, no logos, no people close to camera.
+```
+
+**`interview-room`** 🖼 start frame: `assets-src/images/pillar-interview.jpg`
+```text
+Starting from this exact image, a slow, steady gimbal push-in across the wooden table toward the candidate while she speaks calmly with an open-hand gesture and the two interviewers listen and take a note. Constant slow speed, no cuts, no shake. Natural subtle movement only: blinking, small nods, a page turned. Keep faces, clothes, room and light identical to the image. 35mm film look, soft grain. No text, no logos, nobody looking into the camera, no distorted hands or faces.
+```
+
+**`overwhelm`** 🖼 start frame: the `overwhelm` image (or `assets-src/images/hero-still.jpg` if you haven't made it)
+```text
+Early evening, cool grey light and one warm desk lamp. The same woman sits at a long timber desk buried under tall, leaning stacks of printed CVs; she rubs her temple, tired. Slow, steady push-in toward her. In the second half, a gust from the open window lifts dozens of loose sheets off the stacks and they flutter slowly toward the camera and past it. Constant slow camera speed, no cuts, no shake. 35mm film look, soft grain. No readable text on the papers, no logos, no distorted hands or faces, nobody looking into the camera.
+```
+
+**`clarity`** 🖼 start frame: `assets-src/images/hero-still.jpg`
+```text
+Starting from this exact image at dawn: the woman reviews a short printed list beside her laptop, makes a small confident tick with a pencil, and settles back with a quiet, resolved expression. Golden light slowly grows over the misty hills outside. Very slow, steady push-in, no cuts, no shake. Keep her face, clothes, room and light identical to the image. 35mm film look, soft grain. No readable text, no logos, nobody looking into the camera.
+```
+
+Order on the page: `drone-hills` → `drone-approach` → `interview-room` → `overwhelm` → (papers → signal, drawn in code) → `clarity`.
+Any clip that's missing falls back to the still-image version, so they can arrive one at a time.
