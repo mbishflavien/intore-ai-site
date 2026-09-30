@@ -8,6 +8,7 @@ import { Button } from "@intoreai/design-system/primitives";
 import { IconArrow, IconShield, IconEye, IconCheck, IconCompass } from "@/components/icons";
 import { Imigongo } from "@/components/media/imigongo";
 import { Parallax } from "@/lib/motion/parallax";
+import { TrustCube } from "./trust-cube";
 
 const CARDS = [
   {
@@ -44,22 +45,23 @@ export function Trust() {
       </Parallax>
       <div className="relative mx-auto max-w-[1400px] px-[clamp(20px,5vw,72px)]">
         <Kicker index="05">Trust & compliance — the moat</Kicker>
-        <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-6 grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_auto]">
           <div>
             <h2 className="max-w-3xl font-display text-[clamp(2rem,4.5vw,3.75rem)] font-black leading-[1.02]">
               You can defend this platform <span className="text-clay">to an auditor.</span>
             </h2>
             <p className="mt-5 max-w-lg font-sans text-lg leading-relaxed text-ink-soft">
-              Built the way imigongo is: patterned, deliberate, and made to last. Every safeguard is
-              designed in, not bolted on.
+              Built the way imigongo is: patterned, deliberate, and made to last. Six promises hold
+              it together. Turn the cube to read them.
             </p>
+            {/* Solid backing so the outline button stays legible over the lattice. */}
+            <Reveal delay={0.1} className="mt-8 w-fit rounded-pill bg-surface-elevated shadow-[0_12px_30px_-18px_rgba(19,27,23,0.5)]">
+              <Button href="/legal" variant="secondary">
+                Read our commitments <IconArrow className="h-4 w-4" />
+              </Button>
+            </Reveal>
           </div>
-          {/* Solid backing so the outline button stays legible over the lattice. */}
-          <Reveal delay={0.1} className="w-fit rounded-pill bg-surface-elevated shadow-[0_12px_30px_-18px_rgba(19,27,23,0.5)]">
-            <Button href="/legal" variant="secondary">
-              Read our commitments <IconArrow className="h-4 w-4" />
-            </Button>
-          </Reveal>
+          <TrustCube />
         </div>
 
         <div className="mt-12 grid gap-5 md:grid-cols-2">
