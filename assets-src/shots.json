@@ -1,0 +1,32 @@
+{
+  "style": {
+    "photo": "Editorial documentary photograph, shot on 35mm Kodak Portra 400 film, natural window light, soft fine grain, warm muted palette of paper cream (#f6f3ec), warm ink (#131b17) and terracotta clay (#c2542b), with one small deep emerald green (#12805c) accent in the scene. Quiet, observational, candid, unposed, nobody looking at the camera, shallow depth of field. Set in Kigali, Rwanda; subjects are Rwandan. No text, no logos, no watermarks, no readable screen content, no stock-photo smiles, no pointing at screens, natural anatomically correct hands.",
+    "texture": "Macro studio photograph of traditional Rwandan imigongo relief art: raised geometric zigzag, chevron and concentric diamond ridges sculpted in matte earthen material, painted in terracotta clay (#c2542b), deep warm black (#131b17) and chalky cream (#f6f3ec). Hard raking side light casting long soft shadows across the ridges, tactile surface, subtle dust and hairline cracks. Fills the entire frame edge to edge, no border, no wall edges, no text, no people."
+  },
+  "shots": [
+    { "id": "hero-still", "kind": "photo", "aspect": "16:9", "n": 3,
+      "prompt": "Wide shot: a Rwandan woman recruiter in her thirties, in a linen blazer, sits at a long timber desk beside a floor-to-ceiling window at dawn, reviewing a laptop with calm focus. Through the glass, Kigali's green terraced hills and low mist glow gold. A small potted plant with deep green leaves on the desk. Generous negative space on the left third." },
+    { "id": "problem-hr", "kind": "photo", "aspect": "4:5", "n": 2,
+      "prompt": "Close-up, top-down angle: a hiring manager's hands resting on a tall, tilting stack of printed CVs and application folders on a desk at dusk, a cold half-finished cup of coffee, sticky notes, a pen with the cap off. Feeling of overload and fatigue. Late amber light raking across the paper." },
+    { "id": "problem-seeker", "kind": "photo", "aspect": "4:5", "n": 2,
+      "prompt": "A young Rwandan graduate man in his early twenties sits alone at a small café table in Kigali in the evening, laptop open, chin resting on his hand, thoughtful and a little discouraged, soft screen glow on his face, blurred street lights and motorbike taxis beyond the window." },
+    { "id": "pillar-screen", "kind": "photo", "aspect": "4:3", "n": 2,
+      "prompt": "Over-the-shoulder shot of a Rwandan recruiter reading carefully at a clean desk, a printed shortlist with handwritten notes and a pencil beside a laptop, morning light, calm concentration." },
+    { "id": "pillar-interview", "kind": "photo", "aspect": "4:3", "n": 2,
+      "prompt": "A structured job interview across a simple wooden table in a bright Kigali meeting room: a young Rwandan woman candidate speaks with open hand gesture, two interviewers listen attentively, seen from the side at a respectful distance, papers and a glass of water on the table." },
+    { "id": "pillar-decide", "kind": "photo", "aspect": "4:3", "n": 2,
+      "prompt": "A small hiring panel of three Rwandan professionals, mixed ages and genders, standing around a table discussing printed candidate summaries, one person gesturing thoughtfully, deliberation, late afternoon light through blinds." },
+    { "id": "prep-candidate", "kind": "photo", "aspect": "4:5", "n": 2,
+      "prompt": "A confident young Rwandan woman practising interview answers at home by a window, wearing wired earbuds, speaking softly toward her laptop, notebook open with handwritten notes, a sense of preparation and self-assurance, morning light." },
+    { "id": "closing-still", "kind": "photo", "aspect": "16:9", "n": 3,
+      "prompt": "Evening in a modern Kigali office: a Rwandan hiring manager calmly closes a laptop after making a decision, soft smile of resolve, city lights of Kigali twinkling on the hills through the window behind, deep warm shadows, lots of dark negative space." },
+    { "id": "og-base", "kind": "photo", "aspect": "16:9", "n": 2,
+      "prompt": "Wide cinematic view from inside a quiet modern office toward floor-to-ceiling windows overlooking Kigali's green hills at golden hour, an empty timber desk with a closed laptop and a small green plant in the lower right, the left two-thirds calm and uncluttered." },
+    { "id": "tex-imigongo-1", "kind": "texture", "aspect": "16:9", "n": 2,
+      "prompt": "Pattern: bold repeating zigzag chevrons running horizontally, alternating terracotta and black bands with cream ridges." },
+    { "id": "tex-imigongo-2", "kind": "texture", "aspect": "1:1", "n": 2,
+      "prompt": "Pattern: concentric nested diamonds and spirals, predominantly deep black with thin cream ridges and a few terracotta accents." },
+    { "id": "tex-imigongo-3", "kind": "texture", "aspect": "16:9", "n": 2,
+      "prompt": "Pattern: fine diagonal chevron lattice, predominantly cream and paper white with subtle terracotta ridges, very light and airy, low contrast." }
+  ]
+}

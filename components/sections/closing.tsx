@@ -1,6 +1,7 @@
 "use client";
 
-/* Final CTA: full-viewport contrast shift into night. Footer: designed, Kigali time. */
+/* Final CTA: full-viewport contrast shift into night, over an ambient film loop.
+ * Footer: designed, Kigali time, and an outline wordmark that draws itself in. */
 
 import { useEffect, useState } from "react";
 import { Button, Magnetic } from "@intoreai/design-system/primitives";
@@ -8,6 +9,7 @@ import { Reveal } from "@/lib/motion/reveal";
 import { Wordmark, IconArrow } from "@/components/icons";
 import { gsap } from "@/lib/motion/smooth";
 import { useRef } from "react";
+import { AmbientVideo } from "@/components/media/ambient-video";
 
 function CtaLine({ text, accent = false }: { text: string; accent?: boolean }) {
   return (
@@ -52,8 +54,16 @@ export function FinalCta() {
   }, []);
 
   return (
-    <section ref={root} className="bg-night px-[clamp(20px,5vw,72px)] py-28 text-paper md:py-40">
-      <div className="mx-auto max-w-[1400px] text-center">
+    <section ref={root} className="relative overflow-hidden bg-night px-[clamp(20px,5vw,72px)] py-28 text-paper md:py-48">
+      <AmbientVideo
+        id="closing-loop"
+        posterId="closing-still"
+        alt="A hiring manager closes a laptop after a decision, Kigali at night (illustrative)"
+        className="absolute inset-0 h-full w-full opacity-90"
+        fallback={{ variant: "diamond", tone: "night", scale: 1.8 }}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(14,21,18,0.62)_0%,rgba(14,21,18,0.35)_55%,rgba(14,21,18,0.85)_100%)]" />
+      <div className="relative mx-auto max-w-[1400px] text-center">
         <p className="font-display leading-[1.0] font-black tracking-tight text-[clamp(2.25rem,6vw,5.5rem)]">
           <CtaLine text="Hiring decisions that move" />
           <br />
@@ -95,6 +105,46 @@ function KigaliTime() {
   );
 }
 
+// Longer than any single glyph outline at this size, so each letter draws fully.
+const DASH = 1400;
+
+function OutlineWordmark() {
+  const ref = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const svg = ref.current;
+    if (!svg || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = gsap.context(() => {
+      // Drawn by scrolling to the very end of the page ("max" is always reachable).
+      gsap
+        .timeline({ scrollTrigger: { trigger: svg, start: "top bottom", end: "max", scrub: true } })
+        .fromTo(svg.querySelector("text"), { strokeDashoffset: DASH }, { strokeDashoffset: 0, ease: "none", duration: 1 })
+        .fromTo(
+          svg.querySelector("circle"),
+          { scale: 0, transformOrigin: "50% 50%" },
+          { scale: 1, ease: "back.out(3)", duration: 0.25 },
+          0.8,
+        );
+    });
+    return () => ctx.revert();
+  }, []);
+  return (
+    <svg ref={ref} aria-hidden="true" viewBox="0 0 1000 190" className="mt-14 w-full select-none overflow-visible">
+      <text
+        x="487"
+        y="160"
+        textAnchor="middle"
+        textLength="930"
+        lengthAdjust="spacingAndGlyphs"
+        className="font-display font-black"
+        style={{ fontSize: 190, fill: "none", stroke: "rgba(246,243,236,0.4)", strokeWidth: 1.2, strokeDasharray: DASH }}
+      >
+        IntoreAI
+      </text>
+      <circle cx="975" cy="146" r="14" className="fill-signal" />
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="border-t border-paper/10 bg-night pb-10 pt-16 text-paper">
@@ -133,9 +183,7 @@ export function Footer() {
             <p className="mt-3 font-sans text-[15px] text-paper/70">pilots@intore.ai</p>
           </div>
         </div>
-        <p aria-hidden="true" className="text-outline mt-14 select-none text-center font-display text-[clamp(4rem,14vw,13rem)] font-black leading-none">
-          IntoreAI
-        </p>
+        <OutlineWordmark />
         <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-paper/10 pt-6 font-sans text-xs text-paper/40 md:flex-row">
           <p>© 2026 IntoreAI. All rights reserved.</p>
           <p>AI assists. Humans decide.</p>

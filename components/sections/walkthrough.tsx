@@ -1,8 +1,7 @@
 "use client";
 
-/* Product walkthrough: sticky 01–05 rail + animated token-built mockups.
- * Mockups use ONLY shared tokens/primitives — the Section 3A consistency proof
- * starts here, not later. No video files: choreographed CSS mockups, IO-gated. */
+/* Product walkthrough: sticky 01–05 rail + real product screen recordings.
+ * Each module's capture plays only while its row is active (public/videos/modules). */
 
 import { useEffect, useRef, useState } from "react";
 import { Kicker, Badge } from "@intoreai/design-system/primitives";
@@ -48,9 +47,9 @@ const MODULES = [
 
 function ModuleVideo({ name, active, label }: { name: string; active: boolean; label: string }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const reduced =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Read after mount: reading it during render made SSR and client disagree.
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches), []);
 
   useEffect(() => {
     const v = ref.current;
@@ -83,7 +82,6 @@ function ModuleVideo({ name, active, label }: { name: string; active: boolean; l
         muted
         playsInline
         loop
-        autoPlay={active && !reduced}
         preload="metadata"
         poster={`/videos/modules/${name}.jpg`}
         aria-label={`${label} — screen recording of the real IntoreAI product`}

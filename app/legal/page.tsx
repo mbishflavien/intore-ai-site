@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Kicker } from "@intoreai/design-system/primitives";
 import { Wordmark } from "@/components/icons";
+import { Imigongo } from "@/components/media/imigongo";
 
 export const metadata: Metadata = { title: "Legal & privacy — IntoreAI" };
 
 export default function LegalPage() {
   return (
     <main className="bg-paper text-ink">
+      <Imigongo variant="lattice" tone="paper" scale={0.7} sweep={false} className="relative h-4" />
       <header className="mx-auto max-w-[900px] px-[clamp(20px,5vw,72px)] py-6">
         <a href="/" aria-label="IntoreAI home">
           <Wordmark className="text-2xl" />

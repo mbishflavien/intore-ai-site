@@ -63,8 +63,24 @@ The cinematic libraries (≈58 kB extra) load only on `/`.
   `tailwind.config.ts` — same single-source behavior on the current stack.
 - **Fonts via `next/font/google`** (Fraunces + Public Sans): downloaded at build
   time and self-hosted — zero runtime Google CDN calls.
-- **Animated token-built mockups instead of product videos**: no screen-capture
-  footage exists yet; mockups are IO-gated, transform/opacity-only, and ─ by
-  construction ─ already match the shared design system.
-- **No autoplay video shipped at all** (nothing to gate); add per Section 4.5
-  with `.webm` + `.mp4`, poster, and IntersectionObserver gating when footage lands.
+- **Product walkthrough uses real screen recordings** (`public/videos/modules/`),
+  IO-gated and playing only while their row is active.
+- **Ambient film loops** (`public/videos/ambient/`, via `AmbientVideo`) are muted,
+  IO-gated, `preload="none"` below the fold, and poster-only under reduced motion.
+- **Imigongo textures are drawn in code** (`components/media/imigongo.tsx`, SVG
+  patterns): 0 image bytes, and the fallback for any photo or film not yet generated.
+- **One WebGL effect** (pillar image hover, `DistortImage`): initialised on first
+  hover, renders only while easing, and skipped on touch and under reduced motion.
+
+## Media budget (visual pass)
+
+| Asset | Budget |
+|---|---|
+| Hero film loop (`hero-loop`, 1600w) | ≤ 1.5 MB webm |
+| Any other ambient loop | ≤ 900 KB webm |
+| Hero / above-the-fold photo | ≤ 180 KB AVIF at 1280w |
+| Other photos | lazy-loaded, AVIF + WebP `srcset` (640/1280/2000) |
+
+Pipeline: raw sources in `assets-src/` (git-ignored) → `node scripts/optimize-media.mjs`
+→ `public/media/`, `public/videos/ambient/` and `lib/media-manifest.json`.
+Prompts: `docs/IMAGE_PROMPTS.md` and `docs/VIDEO_PROMPTS.md`.
