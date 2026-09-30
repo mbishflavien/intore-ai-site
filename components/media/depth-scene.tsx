@@ -42,7 +42,7 @@ export function DepthScene({
   className = "",
   /** Horizontal pan at progress 0, as a fraction of the visible width (+ = look right). */
   startPan = 0,
-  strength = 0.24,
+  strength = 0.12,
 }: {
   id: string;
   alt: string;
@@ -145,7 +145,7 @@ export function DepthScene({
         // Distance at which the plane exactly covers the view, with 18% slack
         // so the camera can pan and orbit without ever showing an edge.
         const cover = Math.min(1, aspect / viewAspect) / (2 * tanHalf);
-        const dist = cover * 0.82 * (1 - 0.3 * p); // dolly in as you scroll
+        const dist = cover * 0.86 * (1 - 0.14 * p); // gentle dolly in as you scroll
         const visW = 2 * dist * tanHalf * viewAspect;
         const slackX = Math.max(0, (aspect - visW) / 2);
         const slackY = Math.max(0, (1 - visW / viewAspect) / 2);
@@ -153,8 +153,8 @@ export function DepthScene({
         const cx = THREE.MathUtils.clamp(fx * aspect * 0.5 + pan, -slackX, slackX);
         const cy = THREE.MathUtils.clamp(-fy * 0.5, -slackY, slackY);
         // Orbit: camera slides toward the pointer while looking back at the subject.
-        const ox = look.x * 0.045 + Math.sin(t * 0.23) * 0.008;
-        const oy = -look.y * 0.03 + Math.cos(t * 0.19) * 0.006 + (p - 0.5) * 0.03;
+        const ox = look.x * 0.022 + Math.sin(t * 0.23) * 0.005;
+        const oy = -look.y * 0.015 + Math.cos(t * 0.19) * 0.004 + (p - 0.5) * 0.015;
         // dist is measured to the background plane (z = 0), where the photo's edges are.
         camera.position.set(cx + ox, cy + oy, dist);
         camera.lookAt(cx - ox * 0.35, cy - oy * 0.35, 0);
