@@ -1,15 +1,13 @@
 "use client";
 
-/* HeroFilm: the hero as a short film you scroll through (and rewind), cut
- * from separate shots so the story leads, not one long transition.
- *   Act 1  drone glide over Kigali's hills; leaves whip past the lens and
- *          reveal a hillside office. We push in on its big window, where the
- *          recruiter's office already shows through, and pass the glass.
- *   Act 2  her day turns grey and papers fly → cut to her hands in the pile
- *          → real paper sheets rush past the camera and dissolve into emerald
- *          signal → clarity at dawn, and the ask.
- * Every clip is a frame sequence (scripts/video-frames.mjs, key-frames.mjs);
- * the building is keyed, its window found per frame (scripts/window-boxes.mjs).
+/* HeroFilmTake (kept for comparison at /lab/hero-take): the hero as a short film you scroll through (and rewind).
+ *   Act 1  drone glide over Kigali's hills, leaves whipping past the lens
+ *          → one continuous push to a hillside office, through the glass,
+ *            into an interview
+ *   Act 2  overwhelm (the recruiter's day turns grey, papers fly) → real paper
+ *          sheets rush past the camera and dissolve into emerald signal
+ *          → clarity at dawn, and the ask.
+ * Every clip is a frame sequence (scripts/video-frames.mjs, key-frames.mjs).
  * One canvas draws every visual from a single scroll position; the copy beats
  * are DOM layered on top. */
 
@@ -22,22 +20,18 @@ import { IconArrow } from "@/components/icons";
 const SEQ = {
   hills: { id: "drone-hills", count: 98 },
   foliage: { id: "drone-foliage", count: 60 },
-  building: { id: "drone-building", count: 120 },
+  push: { id: "drone-push", count: 99 },
   overwhelm: { id: "overwhelm", count: 100 },
-  hands: { id: "overwhelm-alt", count: 41 },
 };
 const PAPER = { id: "paper-tumble", count: 60, cols: 8 };
 
 // Where each piece of the story lives on the 0 → 1 scroll track.
 const T = {
   hills: [0, 0.2], // the glide
-  foliage: [0.04, 0.24], // leaves pass the lens, and wipe the building in
-  buildingIn: [0.19, 0.22],
-  building: [0.19, 0.4], // the push towards the window
-  through: [0.36, 0.46], // into the window, past the glass
-  overwhelm: [0.44, 0.71], // golden turns grey, papers fly, head in hands
-  hands: [0.705, 0.86], // cut: close on her hands in the pile
-  papers: [0.78, 0.9], // sheets rush past the camera, then turn into signal
+  foliage: [0, 0.16], // leaves pass the lens during the glide
+  push: [0.19, 0.5], // hills → building → through the glass → the interview
+  overwhelm: [0.5, 0.8], // golden turns grey, papers fly, head in hands
+  papers: [0.72, 0.9], // sheets rush past the camera, then turn into signal
   clarityIn: [0.88, 0.94],
 };
 
@@ -48,7 +42,7 @@ const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 
 type Paper = { x: number; y: number; rot: number; spin: number; tile: number; delay: number };
 type Seq = { frames: (HTMLImageElement | null)[]; url: (i: number) => string };
 
-export function HeroFilm() {
+export function HeroFilmTake() {
   const root = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -68,15 +62,8 @@ export function HeroFilm() {
     });
     const hills = seq(SEQ.hills);
     const foliage = seq(SEQ.foliage);
-    const building = seq(SEQ.building);
+    const push = seq(SEQ.push);
     const overwhelm = seq(SEQ.overwhelm);
-    const hands = seq(SEQ.hands);
-    // Where the keyed window sits in each building frame: [x0, y0, x1, y1], 0..1.
-    let windows: number[][] = [];
-    fetch(`/frames/${SEQ.building.id}/windows.json`)
-      .then((r) => r.json())
-      .then((w) => (windows = w))
-      .catch(() => {});
     const load = (s: Seq, i: number) =>
       new Promise<void>((res) => {
         if (s.frames[i] || !alive) return res();
@@ -93,11 +80,11 @@ export function HeroFilm() {
     // so scrubbing works early, then everything, act by act.
     const queue: [Seq, number][] = [];
     const add = (s: Seq, step: number) => s.frames.forEach((_, i) => i % step === 0 && queue.push([s, i]));
-    [hills, foliage, building, overwhelm, hands].forEach((s) => queue.push([s, 0]));
-    [hills, foliage, building].forEach((s) => add(s, 6));
-    [hills, foliage, building].forEach((s) => add(s, 1));
-    [overwhelm, hands].forEach((s) => add(s, 6));
-    [overwhelm, hands].forEach((s) => add(s, 1));
+    [hills, foliage, push, overwhelm].forEach((s) => queue.push([s, 0]));
+    [hills, foliage, push].forEach((s) => add(s, 6));
+    [hills, foliage, push].forEach((s) => add(s, 1));
+    add(overwhelm, 6);
+    add(overwhelm, 1);
     const worker = async () => {
       while (alive && queue.length) {
         const [s, i] = queue.shift()!;
@@ -155,25 +142,16 @@ export function HeroFilm() {
     resize();
     window.addEventListener("resize", resize);
 
-    type Rect = { x: number; y: number; w: number; h: number };
-    const ready = (im: HTMLImageElement | null): im is HTMLImageElement => !!im && im.complete && !!im.naturalWidth;
-    /** Where an image lands cover-fitted to a box, scaled about (fx, fy) in 0..1 of the box. */
-    const fit = (im: HTMLImageElement, scale: number, fx = 0.5, fy = 0.5, box: Rect = { x: 0, y: 0, w: W, h: H }): Rect => {
-      const r = Math.max(box.w / im.naturalWidth, box.h / im.naturalHeight) * scale;
-      const w = im.naturalWidth * r, h = im.naturalHeight * r;
-      return { x: box.x + fx * box.w - w * fx, y: box.y + fy * box.h - h * fy, w, h };
-    };
-    const put = (im: HTMLImageElement, r: Rect, alpha: number, filter = "none") => {
-      ctx.globalAlpha = alpha;
-      ctx.filter = filter;
-      ctx.drawImage(im, r.x, r.y, r.w, r.h);
-      ctx.filter = "none";
-      ctx.globalAlpha = 1;
-    };
     /** Draw an image cover-fitted, scaled about (fx, fy) in 0..1 screen space. */
     const cover = (im: HTMLImageElement | null, scale: number, alpha: number, filter = "none", fx = 0.5, fy = 0.5) => {
-      if (!ready(im) || alpha <= 0) return;
-      put(im, fit(im, scale, fx, fy), alpha, filter);
+      if (!im || !im.complete || !im.naturalWidth || alpha <= 0) return;
+      const r = Math.max(W / im.naturalWidth, H / im.naturalHeight) * scale;
+      const w = im.naturalWidth * r, h = im.naturalHeight * r;
+      ctx.globalAlpha = alpha;
+      ctx.filter = filter;
+      ctx.drawImage(im, fx * W - w * fx, fy * H - h * fy, w, h);
+      ctx.filter = "none";
+      ctx.globalAlpha = 1;
     };
     /** The frame at t (0..1) of a sequence, or the nearest one that has loaded. */
     const frameAt = (s: Seq, t: number) => {
@@ -226,68 +204,32 @@ export function HeroFilm() {
       ctx.fillStyle = "#0e1512";
       ctx.fillRect(0, 0, W, H);
 
-      // Act 1: the glide over the hills.
+      // Act 1: the glide, then one continuous push into the interview room.
       const glide = seg(p, T.hills);
-      const owIn = ease(seg(p, [T.overwhelm[0], T.overwhelm[0] + 0.03])); // full-frame office takes over
-      if (owIn < 1) cover(frameAt(hills, glide), 1.02 + glide * 0.08, 1, "none", 0.5, 0.62);
-
-      // The building, keyed over the last of the glide, with the office showing
-      // through its window. Past the push, the camera flies into that window:
-      // the whole layer scales about it until the window is the frame.
-      const bIn = ease(seg(p, T.buildingIn));
-      const bt = seg(p, T.building);
-      const bim = frameAt(building, bt);
-      if (bIn > 0 && owIn < 1 && ready(bim)) {
-        const r = fit(bim, 1.02 + bt * 0.04, 0.5, 1);
-        const box = windows[Math.round(bt * (windows.length - 1))];
-        const wr = box
-          ? { x: r.x + box[0] * r.w, y: r.y + box[1] * r.h, w: (box[2] - box[0]) * r.w, h: (box[3] - box[1]) * r.h }
-          : { x: W * 0.45, y: H * 0.5, w: W * 0.1, h: H * 0.12 };
-        const e = ease(seg(p, T.through));
-        const full = Math.max(W / wr.w, H / wr.h) * 1.12; // the window, a little past filling the frame
-        const S = Math.pow(full, e); // exponential, so the push feels like constant speed
-        const cx = wr.x + wr.w / 2, cy = wr.y + wr.h / 2;
-        ctx.save();
-        ctx.translate(cx + (W / 2 - cx) * e, cy + (H / 2 - cy) * e);
-        ctx.scale(S, S);
-        ctx.translate(-cx, -cy);
-        // Through the glass: her office at the start of the day.
-        const office = frameAt(overwhelm, 0);
-        if (ready(office)) {
-          ctx.save();
-          ctx.beginPath();
-          ctx.rect(wr.x, wr.y, wr.w, wr.h);
-          ctx.clip();
-          put(office, fit(office, 1.04, 0.4, 0.5, wr), bIn, `brightness(${0.8 + e * 0.2})`);
-          ctx.restore();
-        }
-        // Graded warm, to sit in the same dawn as the hills behind it.
-        put(bim, r, bIn, "sepia(0.18) saturate(0.92) brightness(1.03)");
-        ctx.restore();
-      }
+      const into = seg(p, T.push);
+      const pushIn = ease(seg(p, [T.push[0], T.push[0] + 0.03])); // crossfade hills → push
+      const pushOut = 1 - ease(seg(p, [T.overwhelm[0] - 0.01, T.overwhelm[0] + 0.03]));
+      if (pushIn < 1) cover(frameAt(hills, glide), 1.02 + glide * 0.08, 1, "none", 0.5, 0.62);
+      if (pushIn > 0 && pushOut > 0) cover(frameAt(push, into), 1.04 + (1 - pushIn) * 0.06, pushIn * pushOut, "none", 0.5, 0.55);
 
       // Leaves rush past the lens: they spread outwards and sit darker and
-      // softer than the plate, as foreground would against a dawn sky. At
-      // their thickest they hide the building's arrival.
+      // softer than the plate, as foreground would against a dawn sky.
       const leaf = seg(p, T.foliage);
-      const leafAlpha = ease(seg(p, [T.foliage[0], T.foliage[0] + 0.03])) * (1 - ease(seg(p, [T.foliage[1] - 0.04, T.foliage[1]])));
+      const leafAlpha = 1 - ease(seg(p, [T.foliage[1] - 0.05, T.foliage[1]]));
       if (leafAlpha > 0) cover(frameAt(foliage, leaf), 1.05 + leaf * 0.6, leafAlpha, "brightness(0.62) saturate(0.85) blur(1.5px)", 0.5, 0.55);
 
-      // Act 2: the recruiter's day, from golden to grey; then a cut to her
-      // hands in the pile, which dims as the signal takes over.
+      // Act 2: the recruiter's day, from golden to grey and buried in paper.
       const ow = seg(p, T.overwhelm);
-      const hd = seg(p, T.hands);
-      const cut = seg(p, [T.hands[0], T.hands[0] + 0.006]); // near-hard cut
+      const owIn = ease(seg(p, [T.overwhelm[0] - 0.01, T.overwhelm[0] + 0.03]));
       const clarity = ease(seg(p, T.clarityIn));
-      if (owIn > 0 && cut < 1) cover(frameAt(overwhelm, ow), 1.04 + ow * 0.06, owIn, "none", 0.4, 0.5);
-      if (cut > 0 && clarity < 1) {
-        const dim = seg(p, [T.papers[0], T.papers[1]]);
-        cover(frameAt(hands, hd), 1.04 + hd * 0.08, cut, dim > 0 ? `brightness(${1 - dim * 0.6})` : "none", 0.5, 0.5);
+      if (owIn > 0 && clarity < 1) {
+        const dim = seg(p, [T.overwhelm[1] - 0.04, T.papers[1]]); // dims as the signal takes over
+        cover(frameAt(overwhelm, ow), 1.04 + ow * 0.06, owIn, dim > 0 ? `brightness(${1 - dim * 0.55})` : "none", 0.4, 0.5);
       }
       cover(desk, 1.08 + seg(p, [0.88, 1]) * 0.04, clarity, "none", 0.45, 0.5);
 
-      // Legibility: darken toward the bottom from the office onward.
-      const shade = seg(p, [0.43, 0.47]);
+      // Legibility: darken toward the bottom from the room onward.
+      const shade = seg(p, [0.33, 0.37]);
       if (shade > 0) {
         const g = ctx.createLinearGradient(0, H, 0, 0);
         g.addColorStop(0, `rgba(14,21,18,${0.85 * shade})`);
@@ -345,7 +287,7 @@ export function HeroFilm() {
         },
       });
       // Each beat: [in, out] on the 0..1 track. The first starts visible.
-      const spans: [number, number][] = [[0, 0.1], [0.13, 0.32], [0.48, 0.58], [0.6, 0.72], [0.79, 0.88], [0.91, 1.01]];
+      const spans: [number, number][] = [[0, 0.1], [0.12, 0.28], [0.38, 0.5], [0.56, 0.7], [0.76, 0.88], [0.91, 1.01]];
       beats.forEach((b, i) => {
         const [a, z] = spans[i];
         if (i > 0) tl.fromTo(b, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.03 }, a);
@@ -397,11 +339,11 @@ export function HeroFilm() {
         </p>
       </div>
 
-      {/* 2 — her office, the morning after the job went live */}
+      {/* 2 — in the room */}
       <div className={`${beat} invisible bottom-[10vh] text-paper opacity-0`}>
-        <p className={`${big} max-w-3xl text-[clamp(2.2rem,5.2vw,5rem)]`}>Monday, 8 a.m. The job went live on Friday.</p>
+        <p className={`${big} max-w-3xl text-[clamp(2.2rem,5.2vw,5rem)]`}>Every interview, on the record.</p>
         <p className="mt-4 max-w-md font-sans text-lg text-paper/75">
-          Every applicant deserves a fair read. She has one week to give it.
+          Structured questions, shared scorecards, one comparable record for every candidate.
         </p>
       </div>
 
